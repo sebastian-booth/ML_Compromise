@@ -3,17 +3,30 @@ import random
 import re
 import math
 
+import player
+
 
 class AbstractPlayer:
     def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
         return [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
-    
+
     def placePips(self, myState, oppState, myScore, oppScore, turn, length, nPips):
         return [[random.randint(0,2),random.randint(0,2),random.randint(0,2)] for i in range(nPips)]
 
 class RandomPlayer(AbstractPlayer):
     pass
 
+class NNPlayer(AbstractPlayer):
+        def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
+            print(myState)
+            print(oppState)
+            '''            print(myScore)
+            print(oppScore)
+            print(turn)
+            print(length)
+            print(nPips)'''
+            l = input("end ")
+            return [random.randint(0,2),random.randint(0,2),random.randint(0,2)]
 
 class GreedyPlayer(AbstractPlayer):
     def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
@@ -312,7 +325,7 @@ class CompromiseGame:
             raise Exception("Green Player is not of valid type: " + str(type(playerA)))
         if not (isinstance(playerB, AbstractPlayer)):
             raise Exception("Red Player is not of valid type: " + str(type(playerB)))
-        self.redPlayer = playerA 
+        self.redPlayer = playerA
         self.greenPlayer = playerB
         self.resetGame()
 
@@ -487,12 +500,12 @@ class CompromiseGame:
         self.getMoves()
         self.fancyPrintMoves(stdscr)
         self.fancyStateHighlight(stdscr)
-        stdscr.getkey()
+        #stdscr.getkey()
         self.updateScore()
         self.fancyDeleteMoves(stdscr)
         self.fancyPrintScore(stdscr)
         self.fancyStatePrint(stdscr)
-        stdscr.getkey()
+        #stdscr.getkey()
 
     def fancyPlay(self, stdscr):        
         curses.mousemask(1)
@@ -525,23 +538,23 @@ class CompromiseGame:
         else:
             stdscr.addstr(9, 50 , "Game tied!          ", curses.color_pair(0))
         stdscr.getkey()
-        while True:
-            pass
+
+
 
 if __name__ == "__main__":
-    pA = HumanPlayer()
-    pB = SmartGreedyPlayer()
-    g = CompromiseGame(pA, pB, 30, 5)
-    curses.wrapper(g.fancyPlay)
-    
-    # score = [0,0,0]
-    # for i in range(100):
-        # g.resetGame()
-        # res = g.play()
-        # if res[0] > res[1]:
-            # score[0] += 1
-        # elif res[1] > res[0]:
-            # score[2] += 1
-        # else:
-            # score[1] += 1
-    # print(score)
+    pA = RandomPlayer() # green
+    pB = SmartGreedyPlayer() # red
+    g = CompromiseGame(pA, pB, 30, 10)
+    #curses.wrapper(g.fancyPlay)
+    score = [0,0,0]
+    for i in range(1000):
+        g.resetGame()
+        res = g.play()
+        if res[0] > res[1]: # if red greater than green
+            score[0] += 1 # give red point
+        elif res[1] > res[0]: # if green greater than red
+            score[2] += 1 # give green point
+        else:
+            score[1] += 1 # tie
+    print("green - player A (ME)     red - player B")
+    print(score)
