@@ -4,13 +4,13 @@ Input layer - Unknown (OppState 27 + MyState 27 // 54 each board pos for both pl
 Hidden layer - Unknown (*1* or 2 layers // 45? neurons)
 Output layer - Done (27 - 111, 112, 113 ... 331, 332, 331)
 Activiation function - sigmoid (Tanh,  ReLU, Leaky ReLU, Maxout)
-Cost function - Mean Squred Error
-Gradient decent - function to minimise cost function
 weight of neuron connections
 bias on hidden neuron
-Backpropagation
 feedforward
-
-genetic algorithm?
+genetic algorithm
 
 Enocde neural network in Matricies with connection weights
+
+Cost function - Mean Squred Error
+Gradient decent - function to minimise cost function
+Backpropagation

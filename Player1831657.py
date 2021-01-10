@@ -1,19 +1,29 @@
 import CompromiseGame as game
 import random
+import NeuralNet as nn
+import numpy as np
 
 class NNPlayer(game.AbstractPlayer):
+
     def play(self, myState, oppState, myScore, oppScore, turn, length, nPips):
-        return [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
+        myState = np.array(myState).flatten()
+        oppState = np.array(oppState).flatten()
+        input_layer = list(myState) + list(oppState)
+        res = nn_obj.train(input_layer)
+        res = [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
+        return res
 
 
 if __name__ == "__main__":
     pA = NNPlayer()
+    nn_obj = nn.NeuralNetwork()
+    print(nn_obj.__dict__)
     pB = game.RandomPlayer()
-    g = game.CompromiseGame(pA, pB, 30, 5)
+    g = game.CompromiseGame(pA, pB, 30, 10)
     #curses.wrapper(g.fancyPlay)
 
     score = [0,0,0]
-    for i in range(1000):
+    for i in range(11):
         g.resetGame()
         res = g.play()
         if res[0] > res[1]: # if red greater than green
