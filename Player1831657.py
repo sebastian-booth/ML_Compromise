@@ -10,7 +10,7 @@ class NNPlayer(game.AbstractPlayer):
         oppState = np.array(oppState).flatten()
         input_layer = list(myState) + list(oppState)
         res = nn_obj.train(input_layer)
-        res = [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
+        #res = [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
         return res
 
 
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     pA = NNPlayer()
     nn_obj = nn.NeuralNetwork()
     print(nn_obj.__dict__)
-    pB = game.RandomPlayer()
+    pB = game.SmartGreedyPlayer()
     g = game.CompromiseGame(pA, pB, 30, 10)
     #curses.wrapper(g.fancyPlay)
 
