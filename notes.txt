@@ -8,6 +8,12 @@ weight of neuron connections
 bias on hidden neuron
 feedforward
 genetic algorithm
+    Representatin of an individual
+    Fitness function
+    Reproduction Method
+        - Crossover
+        - Mutation
+    Selection criteria
 
 Enocde neural network in Matricies with connection weights
 

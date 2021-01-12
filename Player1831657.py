@@ -1,5 +1,4 @@
 import CompromiseGame as game
-import random
 import NeuralNet as nn
 import numpy as np
 
@@ -9,7 +8,7 @@ class NNPlayer(game.AbstractPlayer):
         myState = np.array(myState).flatten()
         oppState = np.array(oppState).flatten()
         input_layer = list(myState) + list(oppState)
-        res = nn_obj.train(input_layer)
+        res = nn_obj.train(input_layer, myScore, oppScore, games_run)
         #res = [random.randint(0, 2), random.randint(0, 2), random.randint(0, 2)]
         return res
 
@@ -17,13 +16,14 @@ class NNPlayer(game.AbstractPlayer):
 if __name__ == "__main__":
     pA = NNPlayer()
     nn_obj = nn.NeuralNetwork()
+    games_run = 10
     print(nn_obj.__dict__)
     pB = game.SmartGreedyPlayer()
     g = game.CompromiseGame(pA, pB, 30, 10)
     #curses.wrapper(g.fancyPlay)
 
     score = [0,0,0]
-    for i in range(11):
+    for i in range(games_run):
         g.resetGame()
         res = g.play()
         if res[0] > res[1]: # if red greater than green
