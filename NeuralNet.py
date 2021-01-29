@@ -1,5 +1,5 @@
 import numpy as np
-import random
+#import random
 ## neural network
 
 def relu(input_layer):
@@ -21,6 +21,8 @@ class NeuralNetwork:
                                [1, 3, 2], [1, 3, 3], [2, 1, 1], [2, 1, 2], [2, 1, 3], [2, 2, 1], [2, 2, 2],
                                [2, 2, 3], [2, 3, 1], [2, 3, 2], [2, 3, 3], [3, 1, 1], [3, 1, 2], [3, 1, 3],
                                [3, 2, 1], [3, 2, 2], [3, 2, 3], [3, 3, 1], [3, 3, 2], [3, 3, 3]]
+        self.ga = GeneticAlgorithm(self.desired_output, self.bias, self.weights_input_to_hidden, self.weights_hidden_to_output)
+
 
     def feedforward(self, input_layer):
         ## relu for input to hidden
@@ -31,43 +33,37 @@ class NeuralNetwork:
         self.layer_hidden_to_output = softmax(np.dot(self.layer_input_to_hidden, self.weights_hidden_to_output) + self.bias)
         print(self.layer_hidden_to_output)
         print(len(self.layer_hidden_to_output))
-        #hold = input()
         return self.layer_hidden_to_output
 
-    def train(self, input_layer, myScore, oppScore, games_run):
+    def train(self, input_layer, myScore, oppScore):
         feedforward_res = self.feedforward(input_layer)
-        res = GeneticAlgorithm(feedforward_res, self.desired_output, self.bias, self.weights_input_to_hidden, self.weights_hidden_to_output, myScore, oppScore, games_run)
         get_max_weight = np.argmax(feedforward_res,axis=0) ## get index of maximum output neron weight
         get_max_weight_val = int(self.desired_output_joined[[get_max_weight]]) ## get value from index above
         res_clear_move = [int(z) for z in str(get_max_weight_val)] ## Format get_max_weight_val as int list valid for game input
         res = [v-1 for v in res_clear_move] ## Minus 1 from move result for valid input
+        #self.ga.fitness(feedforward_res, myScore, oppScore, res)
         return res
 
 ## genetic algorithm
 
 class GeneticAlgorithm:
-    def __init__(self, feedforward_res, desired_output, bias, weights_input_to_hidden, weights_hidden_to_output, oppScore, myScore, games_run):
-        self.feedforward_res = feedforward_res
+    def __init__(self, desired_output, bias, weights_input_to_hidden, weights_hidden_to_output):
         self.desired_output = desired_output
         self.bias = bias
         self.weights_input_to_hidden = weights_input_to_hidden
         self.weights_hidden_to_output = weights_hidden_to_output
-        self.oppScore = oppScore
-        self.myScore = myScore
-        self.games_run = games_run
-        self.solution_representation()
+        self.individual_score = np.zeros(10)
+        #self.solution_representation()
 
     def solution_representation(self):
-        print(*self.desired_output, sep="\n") ## Possible game move solutions are hard coded into self.desired_output
-        self.fitness()
+        #print(*self.desired_output, sep="\n") ## Possible game move solutions are hard coded into self.desired_output
+        #self.fitness()
+        pass
 
-    def fitness(self):
-        if self.myScore < self.oppScore: ## if NNPlayer is performing poorly
-            ## Alter fitness by large margin
+    def fitness(self, feedforward_res, myScore, oppScore, res):
+        score_difference = myScore - oppScore
+        if myScore > oppScore: ## if NNPlayer is performing well
             pass
-
-        if self.myScore == 0 and self.oppScore == 0: ## First round do nothing
-            self.make_move()
 
         else: ## NNPlayer is performing well make minor adjustments
             ## Alter fitness by small margin
@@ -80,9 +76,6 @@ class GeneticAlgorithm:
         pass
 
     def mutation(self): # redproduction
-        pass
-
-    def make_move(self):
         pass
 
     '''
