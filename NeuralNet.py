@@ -11,7 +11,7 @@ def softmax(input_layer):
 
 class NeuralNetwork:
     def __init__(self):
-        self.bias = 1
+        self.bias = np.random.randint(1,3)
         self.weights_input_to_hidden = np.random.rand(54,45)
         self.weights_hidden_to_output = np.random.rand(45,27)
         self.desired_output_joined = np.array([111, 112, 113, 121, 122, 123, 131, 132, 133,
@@ -28,11 +28,11 @@ class NeuralNetwork:
         ## relu for input to hidden
         self.layer_input_to_hidden = relu(np.dot(input_layer, self.weights_input_to_hidden) + self.bias)
         ## softmax for hidden to output
-        print(self.layer_input_to_hidden)
-        print(len(self.layer_input_to_hidden))
+        #print(self.layer_input_to_hidden)
+        #print(len(self.layer_input_to_hidden))
         self.layer_hidden_to_output = softmax(np.dot(self.layer_input_to_hidden, self.weights_hidden_to_output) + self.bias)
-        print(self.layer_hidden_to_output)
-        print(len(self.layer_hidden_to_output))
+        #print(self.layer_hidden_to_output)
+        #print(len(self.layer_hidden_to_output))
         return self.layer_hidden_to_output
 
     def train(self, input_layer, myScore, oppScore):
@@ -43,6 +43,15 @@ class NeuralNetwork:
         res = [v-1 for v in res_clear_move] ## Minus 1 from move result for valid input
         #self.ga.fitness(feedforward_res, myScore, oppScore, res)
         return res
+
+    def get_weights_input_to_hidden(self):
+        return self.weights_input_to_hidden
+
+    def get_weights_hidden_to_output(self):
+        return self.weights_hidden_to_output
+
+    def get_bias(self):
+        return self.bias
 
 ## genetic algorithm
 
