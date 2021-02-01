@@ -1,5 +1,4 @@
 import numpy as np
-#import random
 ## neural network
 
 def relu(input_layer):
@@ -21,8 +20,6 @@ class NeuralNetwork:
                                [1, 3, 2], [1, 3, 3], [2, 1, 1], [2, 1, 2], [2, 1, 3], [2, 2, 1], [2, 2, 2],
                                [2, 2, 3], [2, 3, 1], [2, 3, 2], [2, 3, 3], [3, 1, 1], [3, 1, 2], [3, 1, 3],
                                [3, 2, 1], [3, 2, 2], [3, 2, 3], [3, 3, 1], [3, 3, 2], [3, 3, 3]]
-        self.ga = GeneticAlgorithm(self.desired_output, self.bias, self.weights_input_to_hidden, self.weights_hidden_to_output)
-
 
     def feedforward(self, input_layer):
         ## relu for input to hidden
@@ -53,41 +50,11 @@ class NeuralNetwork:
     def get_bias(self):
         return self.bias
 
-## genetic algorithm
+    def set_weights_input_to_hidden(self, set_val):
+        self.weights_input_to_hidden = set_val
 
-class GeneticAlgorithm:
-    def __init__(self, desired_output, bias, weights_input_to_hidden, weights_hidden_to_output):
-        self.desired_output = desired_output
-        self.bias = bias
-        self.weights_input_to_hidden = weights_input_to_hidden
-        self.weights_hidden_to_output = weights_hidden_to_output
-        self.individual_score = np.zeros(10)
-        #self.solution_representation()
+    def set_weights_hidden_to_output(self, set_val):
+        self.weights_hidden_to_output = set_val
 
-    def solution_representation(self):
-        #print(*self.desired_output, sep="\n") ## Possible game move solutions are hard coded into self.desired_output
-        #self.fitness()
-        pass
-
-    def fitness(self, feedforward_res, myScore, oppScore, res):
-        score_difference = myScore - oppScore
-        if myScore > oppScore: ## if NNPlayer is performing well
-            pass
-
-        else: ## NNPlayer is performing well make minor adjustments
-            ## Alter fitness by small margin
-            pass
-
-    def selection(self):
-        pass
-
-    def crossover(self): # reproduction
-        pass
-
-    def mutation(self): # redproduction
-        pass
-
-    '''
-    def find_new_solution(self):
-        pass
-    '''
+    def set_bias(self, set_val):
+        self.bias = set_val

@@ -1,7 +1,6 @@
 import CompromiseGame as game
 import NeuralNet as nn
 import numpy as np
-import random
 
 class NNPlayer(game.AbstractPlayer):
     def __init__(self):
@@ -23,20 +22,23 @@ class GeneticAlgorithm:
         self.score_list = []
         self.pB = game.SmartGreedyPlayer()
         self.pop_size = 100
-        self.games_played = 20
+        self.games_played = 3
         self.count = 0
         self.player_pop = []
         self.indiv_fitness_score = list(np.zeros(self.pop_size))
         self.fitness_wheel = []
         self.parents = []
         self.crossover_pair = []
+        self.offspring = []
 
     def generate_init_pop(self):
         for x in range(self.pop_size):
-            # nn_obj = nn.NeuralNetwork()
             self.player_pop.append(NNPlayer())
 
     def fitness_through_play(self):
+        self.indiv_fitness_score = list(np.zeros(self.pop_size))
+        self.count = 0
+        print(self.player_pop)
         for y in self.player_pop:
             res_total = 0
             pA = y
@@ -58,7 +60,7 @@ class GeneticAlgorithm:
             # print("red - player A (ME)     green - player B)
             self.score_list.append(score)
             self.indiv_fitness_score[self.count] = res_total
-            print(self.count)
+            #print(self.count)
             self.count += 1
         print(self.score_list)
         extract_my_score = [x[0] for x in self.score_list]
@@ -66,9 +68,13 @@ class GeneticAlgorithm:
         # print(int(np.argmax(extract_my_score)))
         print(sorted(self.indiv_fitness_score))  # total score advantage
 
-    def find_parents(self): # take 2
-        fitness_sum = sum(self.indiv_fitness_score)
+    def find_parents(self):
+        fitness_sum = int(sum(self.indiv_fitness_score))
+        self.fitness_wheel = []
+        self.parents = []
         temp_player_pop = self.player_pop[:]
+        print(self.player_pop)
+        print(len(self.player_pop))
         fitness_buildup = 0
         for x in self.indiv_fitness_score:
             self.fitness_wheel.append(x/fitness_sum)
@@ -88,35 +94,94 @@ class GeneticAlgorithm:
         print(len(self.parents))
 
     def crossover(self):
+        self.offspring = []
+        self.crossover_pair = []
         for x in zip(*[iter(self.parents)]*2): # zip from https://stackoverflow.com/a/5389547
             print(x)
             self.crossover_pair.append(x)
         print(self.crossover_pair)
         print(len(self.crossover_pair))
-        input()
+        for y in self.crossover_pair:
+            ith_crossover = np.random.randint(1, 53)
+            hto_crossover = np.random.randint(1, 44)
+
+            p1_ith = y[0].get_nn().get_weights_input_to_hidden()
+            p2_ith = y[1].get_nn().get_weights_input_to_hidden()
+
+            p1_hto = y[0].get_nn().get_weights_hidden_to_output()
+            p2_hto = y[1].get_nn().get_weights_hidden_to_output()
+
+            self.offspring.append(NNPlayer())
+            c1_ith = np.append(p1_ith[:ith_crossover], p2_ith[ith_crossover:], axis=0)
+            c1_hto = np.append(p1_hto[:hto_crossover], p2_hto[hto_crossover:], axis=0)
+            self.offspring[-1].get_nn().set_weights_input_to_hidden(c1_ith)
+            self.offspring[-1].get_nn().set_weights_hidden_to_output(c1_hto)
+
+            ga.mutation(self.offspring[-1])
+
+            self.offspring.append(NNPlayer())
+            c2_ith = np.append(p2_ith[:ith_crossover], p1_ith[ith_crossover:], axis=0)
+            c2_hto = np.append(p2_hto[:hto_crossover], p1_hto[hto_crossover:], axis=0)
+            self.offspring[-1].get_nn().set_weights_input_to_hidden(c2_ith)
+            self.offspring[-1].get_nn().set_weights_hidden_to_output(c2_hto)
+
+            ga.mutation(self.offspring[-1])
 
         '''
-        get:
-        ?self.bias
-        self.weights_input_to_hidden
-        self.weights_hidden_to_output
-        '''
+            print("-----------------------------------------------------------")
+            print(self.offspring[0].get_nn().get_weights_input_to_hidden())
+            print("-----------------------------------------------------------")
+            print(self.offspring[1].get_nn().get_weights_input_to_hidden())
+            print("-----------------------------------------------------------")
+            print(self.offspring[0].get_nn().get_weights_hidden_to_output())
+            print("-----------------------------------------------------------")
+            print(self.offspring[1].get_nn().get_weights_hidden_to_output())
+            print("-----------------------------------------------------------")
 
-    def mutation(self):
-        mutate_chance = random.randint(1,4)
+            
+            print(str(y[0]) + " Parent 1 - i->h")
+            print(y[0].get_nn().get_weights_input_to_hidden())
+            print(str(y[1]) + " Parent 2 - i->h")
+            print(y[1].get_nn().get_weights_input_to_hidden())
+
+            print(str(y[0]) + " Parent 1 - h->o")
+            print(y[0].get_nn().get_weights_hidden_to_output())
+            print(str(y[1]) + " Parent 2 - h->o")
+            print(y[1].get_nn().get_weights_hidden_to_output())
+            '''
+
+    def mutation(self, child):
+        mutate_chance = np.random.randint(1,4)
         if mutate_chance == 4:
-            pass
+            mutate_ith = child.get_nn().get_weights_input_to_hidden()
+            #mutate_ith[np.random.randint(0,len(mutate_ith))]+= np.random.uniform(-1.0, 1.0, 1) # https://towardsdatascience.com/genetic-algorithm-implementation-in-python-5ab67bb124a6
+            index = range(len(mutate_ith))
+            flip_1, flip_2 = np.random.sample(index, 2)
+            mutate_ith[flip_1], mutate_ith[flip_2] = mutate_ith[flip_2], mutate_ith[flip_1]
+            child.get_nn().set_weights_input_to_hidden(mutate_ith)
+
+            mutate_hto = child.get_nn().get_weights_hidden_to_output()
+            #mutate_hto[np.random.randint(0,len(mutate_hto))]+= np.random.uniform(-1.0, 1.0, 1) # https://towardsdatascience.com/genetic-algorithm-implementation-in-python-5ab67bb124a6
+            index = range(len(mutate_hto)) # swap code from https://stackoverflow.com/a/47724064
+            flip_1, flip_2 = np.random.sample(index, 2)
+            mutate_hto[flip_1], mutate_hto[flip_2] = mutate_hto[flip_2], mutate_hto[flip_1]
+            child.get_nn().set_weights_hidden_to_output(mutate_hto)
         else:
             pass
 
     def selection(self):
-        pass
+        self.player_pop = []
+        if len(self.offspring) >= self.pop_size:
+            for x in range (self.pop_size):
+                self.player_pop.append(self.offspring[x])
+        else:
+            self.player_pop = self.offspring
 
-    def test_fitness(self):
+    def play_trained_NNP(self):
         pA = self.player_pop[int(np.argmax(self.indiv_fitness_score))]
         pB = game.SmartGreedyPlayer()
         g = game.CompromiseGame(pA, pB, 30, 10)
-        games_played = 50
+        games_played = 5
         score = [0, 0, 0]
         for i in range(games_played):
             g.resetGame()
@@ -131,6 +196,8 @@ class GeneticAlgorithm:
         print("pog")
         print(score)
         print("{:.0%}".format(score[0] / games_played))
+        file = open("percentages_pog.txt", "a")
+        file.write("{:.0%}".format(score[0] / games_played) + "\n")
         # score_good = score
 
         pA = NNPlayer()
@@ -154,17 +221,27 @@ class GeneticAlgorithm:
         print("trash")
         print(score)
         print("{:.0%}".format(score[0] / games_played))
+        fileo = open("percentages_trash.txt", "a")
+        fileo.write("{:.0%}".format(score[0] / games_played) + "\n")
+        print("--------------------------")
 
 
 if __name__ == "__main__":
-    #generation = 1000
+    generation = 1000
+    file = open("percentages_pog.txt", "w")
+    file.close()
+    fileo = open("percentages_trash.txt", "w")
+    fileo.close()
     ga = GeneticAlgorithm()
     ga.generate_init_pop()
-    #for x in range(generation):
+    for x in range(generation):
+        ga.fitness_through_play()
+        ga.find_parents()
+        ga.crossover()
+        ga.selection()
     ga.fitness_through_play()
-    ga.find_parents()
-    ga.test_fitness()
-    ga.crossover()
+    for x in range(10):
+        ga.play_trained_NNP()
     # play the game for real
 
 # --------------------------------------------------------------------------------------------
