@@ -22,7 +22,7 @@ class GeneticAlgorithm:
     def __init__(self):
         self.pB = game.SmartGreedyPlayer()
         self.pop_size = 100
-        self.games_played = 10
+        self.games_played = 100
         self.count = 0
         self.player_pop = []
         self.indiv_fitness_score = list(np.zeros(self.pop_size))
