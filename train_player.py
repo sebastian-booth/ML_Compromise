@@ -154,9 +154,9 @@ class GeneticAlgorithm:
         # current worst players with offspring.
         temp_player_fitness = np.array(self.indiv_fitness_score[:])
         if len(self.offspring) < self.pop_size//2:
-            for x in temp_player_fitness.argsort()[:len(self.offspring)]:
+            for (count, x) in enumerate(temp_player_fitness.argsort()[:len(self.offspring)]):
                 self.player_pop.pop(x)
-                self.player_pop.append(self.offspring)
+                self.player_pop.append(self.offspring[count])
         else:
             for x in temp_player_fitness.argsort()[:self.pop_size//2]:
                 self.player_pop.pop(x)
