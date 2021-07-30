@@ -1,7 +1,12 @@
 # Compromise
 ###### A simple game to be used in machine learning teaching
 
-A web implementation of the game can be found [here](https://gmoutsin.github.io/compromise/game).
+Contents
+- CompromiseGame.py - Game created by lecturer to implement machine learning aspects
+- Player1831653.py - The best player trained through train_player.py for the game
+- NeuralNet.py - An instance of a neural network used by each player in training and to recieve game status and make moves
+- best-player.p - Neural network parameters for best player
+- train_player.py - Training routine using genetic algorithm to find the player with the best neural network parameters to play the game
 
 ## Rules
 
